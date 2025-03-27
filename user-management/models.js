@@ -27,7 +27,7 @@ const User = sequelize.define("User", {
   },
 });
 
-// Define User model
+// Define Menu model
 const Menu = sequelize.define("Menu", {
   title: {
     type: DataTypes.STRING,

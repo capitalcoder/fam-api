@@ -16,6 +16,10 @@ const Asset = sequelize.define("Asset", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  supplier: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   purchase_date: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -82,6 +86,48 @@ const Location = sequelize.define("Location", {
   },
 });
 
+const Supplier = sequelize.define("Supplier", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  contact_person: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+const Assignments = sequelize.define("Assignments", {
+  asset: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  user: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  assignment_date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  return_date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM("Active", "Returned"),
+    allowNull: false,
+  },
+});
+
 // Sync the model with the database
 const syncDatabase = async () => {
   await sequelize.sync();
@@ -89,4 +135,4 @@ const syncDatabase = async () => {
 
 syncDatabase();
 
-module.exports = { Asset, sequelize };
+module.exports = { Category, Location, Supplier, Asset, Assignments, sequelize };
