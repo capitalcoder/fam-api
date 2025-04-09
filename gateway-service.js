@@ -5,7 +5,7 @@ const app = express();
 const port = 3000;
 
 const userServiceURL = "http://localhost:3001/users";
-const assetServiceURL = "http://localhost:3002/assets"; // Asset Service URL
+const assetServiceURL = "http://localhost:3002/assets";
 
 const userProxy = createProxyMiddleware({
   target: userServiceURL,
