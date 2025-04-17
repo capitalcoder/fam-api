@@ -22,7 +22,7 @@ const User = sequelize.define("User", {
     allowNull: false,
   },
   role: {
-    type: DataTypes.ENUM("Admin", "Manager", "Employee"),
+    type: DataTypes.ENUM("Admin", "Manager", "Operator"),
     allowNull: false,
   },
 });
@@ -39,7 +39,7 @@ const Menu = sequelize.define("Menu", {
     allowNull: false,
   },
   role: {
-    type: DataTypes.ENUM("Admin", "Manager", "Employee"),
+    type: DataTypes.ENUM("Admin", "Manager", "Operator"),
     allowNull: true,
   },
 });
