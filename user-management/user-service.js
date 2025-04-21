@@ -1,6 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { User } = require('./models');
+const express = require("express");
+const bodyParser = require("body-parser");
+const { User } = require("./models");
+const verifyToken = require("./auth-middleware");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,67 +11,85 @@ const PORT = process.env.PORT || 3001;
 app.use(bodyParser.json());
 
 // Create a new user
-app.post('/users', async (req, res) => {
-    try {
-        const user = await User.create(req.body);
-        res.status(201).json(user);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+app.post("/users", async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword, role });
+    await user.save();
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 // Get all users
-app.get('/users', async (req, res) => {
-    try {
-        const users = await User.findAll();
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+app.get("/users", verifyToken, async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Get a user by ID
-app.get('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
-            return res.status(404).json({ error: 'User  not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+app.get("/users/:id", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User  not found" });
     }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Update a user by ID
-app.put('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
-            return res.status(404).json({ error: 'User  not found' });
-        }
-        await user.update(req.body);
-        res.json(user);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
+app.put("/users/:id", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User  not found" });
     }
+    await user.update(req.body);
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 // Delete a user by ID
-app.delete('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
-            return res.status(404).json({ error: 'User  not found' });
-        }
-        await user.destroy();
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+app.delete("/users/:id", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User  not found" });
     }
+    await user.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/users/login", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(401).json({ error: "Authentication failed" });
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch)
+    return res.status(401).json({ error: "Authentication failed" });
+
+  const token = jwt.sign({ userId: user._id }, "bci-fixed-asset-management", {
+    expiresIn: "1h",
+  });
+  res.status(200).json({ token });
 });
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server user is running on http://localhost:${PORT}`);
+  console.log(`Server user is running on http://localhost:${PORT}`);
 });
