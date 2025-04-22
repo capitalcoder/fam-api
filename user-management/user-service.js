@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const { User } = require("./models");
 const verifyToken = require("./auth-middleware");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -76,10 +77,18 @@ app.delete("/users/:id", verifyToken, async (req, res) => {
 
 app.post("/users/login", async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  
+  const user = await User.findOne({
+    where: {
+      email: email,
+    },
+  });
   if (!user) return res.status(401).json({ error: "Authentication failed" });
 
-  const passwordMatch = await bcrypt.compare(password, user.password);
+  const passwordMatch = await bcrypt.compare(
+    password,
+    user.dataValues.password
+  );
   if (!passwordMatch)
     return res.status(401).json({ error: "Authentication failed" });
 

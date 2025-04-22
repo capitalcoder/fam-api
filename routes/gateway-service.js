@@ -2,7 +2,7 @@ const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const https = require("https");
 const fs = require("fs");
-// const { default: helmet } = require("helmet");
+const { default: helmet } = require("helmet");
 const verifyToken = require("./auth-middleware");
 
 const app = express();
@@ -15,6 +15,7 @@ const options = {
 
 const userServiceURL = "http://localhost:3001/users";
 const assetServiceURL = "http://localhost:3002/assets";
+const depreciationServiceURL = "http://localhost:3003/depreciation";
 
 const userProxy = createProxyMiddleware({
   target: userServiceURL,
@@ -32,20 +33,20 @@ const assetProxy = createProxyMiddleware({
   },
 });
 
-// app.disable("x-powered-by");
-// app.use(helmet());
-// app.use((req, res, next) => {
-//   res.status(404).send("Sorry can't find the page!");
-// });
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res
-//     .status(500)
-//     .send("Something broke! behind Please contact the system administrator.");
-// });
+const depreciationProxy = createProxyMiddleware({
+  target: depreciationServiceURL,
+  changeOrigin: true,
+  pathRewrite: {
+    "^/depreciation": "",
+  },
+});
+
+app.disable("x-powered-by");
+app.use(helmet());
 
 app.use("/v1/users", userProxy);
-app.use("/v1/assets", assetProxy);
+app.use("/v1/assets", verifyToken, assetProxy);
+app.use("/v1/depreciation", verifyToken, depreciationProxy);
 
 https.createServer(options, app).listen(port, () => {
   console.log(`HTTPS Server running on port ${port}`);
