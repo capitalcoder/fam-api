@@ -63,4 +63,4 @@ assign_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = assign_router;
+module.exports = { assign_router };

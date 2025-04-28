@@ -63,4 +63,4 @@ category_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = category_router;
+module.exports = { category_router };

@@ -63,4 +63,4 @@ supplier_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = supplier_router;
+module.exports = { supplier_router };

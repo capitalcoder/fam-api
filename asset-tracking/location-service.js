@@ -2,11 +2,11 @@ const express = require("express");
 const location_router = express.Router();
 const { Location } = require("./models");
 
-// Create a new assignment
+// Create a new location
 location_router.post("/", async (req, res) => {
   try {
     const location = await Location.create(req.body);
-    res.status(201).json(location);
+    res.status(201).json({response_code: '201', response_message: 'Successfully add a new location', data: location});
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -63,4 +63,4 @@ location_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = location_router;
+module.exports = { location_router };

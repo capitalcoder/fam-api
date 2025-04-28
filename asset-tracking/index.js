@@ -4,21 +4,21 @@ const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3002;
 
 // Import routes
-const assetRouter = require("./routes/asset_service");
-const categoryRouter = require("./routes/category_service");
-const locationRouter = require("./routes/location_service");
-const assignmentRouter = require("./routes/assignment-service");
-const supplierRouter = require("./routes/supplier-service");
+const { asset_router } = require("./asset-service");
+const { category_router } = require("./category-service");
+const { location_router } = require("./location-service");
+const { assign_router } = require("./assignment-service");
+const { supplier_router } = require("./supplier-service");
 
 // middleware
 app.use(bodyParser.json());
 
 // Use routes
-app.use("/assets", assetRouter);
-app.use("/assets/category", categoryRouter);
-app.use("/assets/location", locationRouter);
-app.use("/assets/assignment", assignmentRouter);
-app.use("/assets/supplier", supplierRouter);
+app.use("/assets", asset_router);
+app.use("/assets/category", category_router);
+app.use("/assets/location", location_router);
+app.use("/assets/assignment", assign_router);
+app.use("/assets/supplier", supplier_router);
 
 // Start the server
 app.listen(PORT, () => {

@@ -6,9 +6,16 @@ const { Asset } = require("./models");
 asset_router.post("/", async (req, res) => {
   try {
     const asset = await Asset.create(req.body);
-    res.status(201).json(asset);
+    res.status(201).json({
+      response_code: "201",
+      response_message: "Successfully registerd a new asset",
+      data: asset,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({
+      error_code: "400",
+      error_message: "Failed to register an asset: " + error.message,
+    });
   }
 });
 
@@ -16,9 +23,18 @@ asset_router.post("/", async (req, res) => {
 asset_router.get("/", async (req, res) => {
   try {
     const assets = await Asset.findAll();
-    res.json(assets);
+    res
+      .status(200)
+      .json({
+        response_code: "200",
+        response_message: "Successfully loaded all assets",
+        data: assets,
+      });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error_code: "500",
+      error_message: error.message,
+    });
   }
 });
 
@@ -27,11 +43,21 @@ asset_router.get("/:id", async (req, res) => {
   try {
     const asset = await Asset.findByPk(req.params.id);
     if (!asset) {
-      return res.status(404).json({ error: "Asset  not found" });
+      return res.status(404).json({
+        response_code: "404",
+        response_message: "The specified asset is not found",
+      });
     }
-    res.json(asset);
+    res.json({
+      response_code: "200",
+      response_message: "Successfully found the specified asset",
+      data: asset,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error_code: "500",
+      error_message: error.message,
+    });
   }
 });
 
@@ -63,4 +89,4 @@ asset_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = asset_router;
+module.exports = { asset_router };

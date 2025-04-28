@@ -8,6 +8,13 @@ const sequelize = new Sequelize("fam_asset", "postgres", "P@ssw0rd", {
 
 // Define Asset model
 const Asset = sequelize.define("Asset", {
+  code: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  sac: {
+    type: DataTypes.STRING,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -45,8 +52,8 @@ const Asset = sequelize.define("Asset", {
     type: DataTypes.STRING,
   },
   barcode: {
-    type: DataTypes.TEXT,
-    allowNull: false,
+    type: DataTypes.BLOB,
+    allowNull: true,
   },
 });
 
@@ -127,6 +134,10 @@ const Assignments = sequelize.define("Assignments", {
     allowNull: false,
   },
 });
+
+Category.hasMany(Asset);
+Location.hasMany(Asset);
+Asset.hasOne(Assignments);
 
 // Sync the model with the database
 const syncDatabase = async () => {
