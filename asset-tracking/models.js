@@ -11,23 +11,18 @@ const Asset = sequelize.define("Asset", {
   code: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
-  sac: {
+  productionCode: { // Serial number or any number from manufacturer
     type: DataTypes.STRING,
+    allowNull: true,
+    unique: true,
   },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  category: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  supplier: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  purchase_date: {
+  purchaseDate: {
     type: DataTypes.DATE,
     allowNull: false,
   },
@@ -35,25 +30,26 @@ const Asset = sequelize.define("Asset", {
     type: DataTypes.DECIMAL,
     allowNull: false,
   },
-  location: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   status: {
     type: DataTypes.ENUM(
-      "Available",
-      "In Use",
-      "Under Maintenance",
-      "Disposed"
+      "Tersedia",
+      "Sedang Digunakan",
+      "Sedang Diperbaiki",
+      "Dibuang"
     ),
     allowNull: false,
   },
-  owner: {
-    type: DataTypes.STRING,
+  warrantyExpireDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
   },
   barcode: {
     type: DataTypes.BLOB,
     allowNull: true,
+  },
+  updatedBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 });
 
@@ -70,6 +66,10 @@ const Category = sequelize.define("Category", {
     unique: true,
   },
   parent: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  updatedBy: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -91,14 +91,19 @@ const Location = sequelize.define("Location", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  updatedBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
+// Define supplier
 const Supplier = sequelize.define("Supplier", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  contact_person: {
+  contactPerson: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -110,22 +115,19 @@ const Supplier = sequelize.define("Supplier", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  updatedBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
-const Assignments = sequelize.define("Assignments", {
-  asset: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  user: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  assignment_date: {
+// Define assignmnet
+const Assignment = sequelize.define("Assignment", {
+  assignDate: {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  return_date: {
+  returnDate: {
     type: DataTypes.DATE,
     allowNull: false,
   },
@@ -133,11 +135,34 @@ const Assignments = sequelize.define("Assignments", {
     type: DataTypes.ENUM("Active", "Returned"),
     allowNull: false,
   },
+  updatedBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+// Define assignmnet
+const Assignee = sequelize.define("Assignee", {
+  employeeId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  updatedBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 Category.hasMany(Asset);
 Location.hasMany(Asset);
-Asset.hasOne(Assignments);
+Supplier.hasMany(Asset);
+Supplier.hasMany(Asset);
+Asset.hasOne(Assignment);
+Assignee.hasMany(Assignment);
 
 // Sync the model with the database
 const syncDatabase = async () => {
@@ -146,4 +171,4 @@ const syncDatabase = async () => {
 
 syncDatabase();
 
-module.exports = { Category, Location, Supplier, Asset, Assignments, sequelize };
+module.exports = { Category, Location, Supplier, Asset, Assignment, Assignee, sequelize };

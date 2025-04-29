@@ -8,13 +8,13 @@ asset_router.post("/", async (req, res) => {
     const asset = await Asset.create(req.body);
     res.status(201).json({
       response_code: "201",
-      response_message: "Successfully registerd a new asset",
+      response_message: "Berhasil mendaftarkan aset baru",
       data: asset,
     });
   } catch (error) {
     res.status(400).json({
       error_code: "400",
-      error_message: "Failed to register an asset: " + error.message,
+      error_message: "Gagal mendaftarkan aset: " + error.message,
     });
   }
 });
@@ -27,7 +27,7 @@ asset_router.get("/", async (req, res) => {
       .status(200)
       .json({
         response_code: "200",
-        response_message: "Successfully loaded all assets",
+        response_message: "Berhasil mengambil semua data aset",
         data: assets,
       });
   } catch (error) {
@@ -45,12 +45,12 @@ asset_router.get("/:id", async (req, res) => {
     if (!asset) {
       return res.status(404).json({
         response_code: "404",
-        response_message: "The specified asset is not found",
+        response_message: "Aset tidak ditemukan",
       });
     }
     res.json({
       response_code: "200",
-      response_message: "Successfully found the specified asset",
+      response_message: "Aset ditemukan",
       data: asset,
     });
   } catch (error) {
@@ -66,7 +66,10 @@ asset_router.put("/:id", async (req, res) => {
   try {
     const asset = await Asset.findByPk(req.params.id);
     if (!asset) {
-      return res.status(404).json({ error: "asset  not found" });
+      return res.status(404).json({
+        response_code: "404",
+        response_message: "The specified asset does not exist",
+      });
     }
     await asset.update(req.body);
     res.json(asset);
@@ -80,12 +83,22 @@ asset_router.delete("/:id", async (req, res) => {
   try {
     const asset = await Asset.findByPk(req.params.id);
     if (!asset) {
-      return res.status(404).json({ error: "asset  not found" });
+      return res.status(404).json({
+        response_code: "404",
+        response_message: "The specified asset does not exist",
+      });
     }
     await asset.destroy();
-    res.status(204).send();
+    res.status(204).json({
+      response_code: "204",
+      response_message: "Successfully delete asset #" + req.params.id,
+      data: category,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error_code: "500",
+      error_message: error.message,
+    });
   }
 });
 

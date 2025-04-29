@@ -6,19 +6,33 @@ const { Category } = require("./models");
 category_router.post("/", async (req, res) => {
   try {
     const category = await Category.create(req.body);
-    res.status(201).json(category);
+    res.status(201).json({
+      response_code: "201",
+      response_message: "Successfully adds a new category",
+      data: category,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({
+      error_code: "400",
+      error_message: error.message,
+    });
   }
 });
 
 // Get all category
-category_router.get("/", async (req, res) => {
+category_router.get("/all", async (req, res) => {
   try {
     const categories = await Category.findAll();
-    res.json(categories);
+    res.json({
+      response_code: "200",
+      response_message: "Successfully loads all of the categories",
+      data: categories,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error_code: "500",
+      error_message: error.message,
+    });
   }
 });
 
@@ -27,9 +41,16 @@ category_router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: "category not found" });
+      return res.status(404).json({
+        error_code: "404",
+        error_message: "Specified category does not exist",
+      });
     }
-    res.json(category);
+    res.json({
+      response_code: "200",
+      response_message: "Successfully get a category",
+      data: category,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -40,12 +61,22 @@ category_router.put("/:id", async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: "category not found" });
+      return res.status(404).json({
+        error_code: "404",
+        error_message: "Specified category does not exist",
+      });
     }
     await category.update(req.body);
-    res.json(category);
+    res.status(200).json({
+      response_code: "200",
+      response_message: "Successfully update a category",
+      data: category,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({
+      error_code: "400",
+      error_message: error.message,
+    });
   }
 });
 
@@ -54,12 +85,22 @@ category_router.delete("/:id", async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: "category not found" });
+      return res.status(404).json({
+        error_code: "404",
+        error_message: "Specified category does not exist",
+      });
     }
     await Category.destroy();
-    res.status(204).send();
+    res.status(204).json({
+      response_code: "204",
+      response_message: "Successfully delete category #" + req.params.id,
+      data: category,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error_code: "500",
+      error_message: error.message,
+    });
   }
 });
 
