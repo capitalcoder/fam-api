@@ -16,6 +16,7 @@ const options = {
 const userServiceURL = "http://localhost:3001/users";
 const assetServiceURL = "http://localhost:3002/assets";
 const depreciationServiceURL = "http://localhost:3003/depreciation";
+const maintenanceServiceURL = "http://localhost:3003/maintenance";
 
 const userProxy = createProxyMiddleware({
   target: userServiceURL,
@@ -41,13 +42,22 @@ const depreciationProxy = createProxyMiddleware({
   },
 });
 
+const maintenanceProxy = createProxyMiddleware({
+  target: maintenanceServiceURL,
+  changeOrigin: true,
+  pathRewrite: {
+    "^/maintenance": "",
+  },
+});
+
 app.disable("x-powered-by");
 app.use(helmet());
 
 app.use("/v1/users", userProxy);
 app.use("/v1/assets", verifyToken, assetProxy);
 app.use("/v1/depreciation", verifyToken, depreciationProxy);
+app.use("/v1/maintenance", verifyToken, maintenanceProxy);
 
 https.createServer(options, app).listen(port, () => {
-  console.log(`HTTPS Server running on port ${port}`);
+  console.log(`Gateway service running on port ${port}`);
 });

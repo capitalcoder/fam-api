@@ -7,17 +7,21 @@ const sequelize = new Sequelize("fam_maintenance", "postgres", "P@ssw0rd", {
 });
 
 // Define depreciation model
-const MaintenanceLogs = sequelize.define("MaintenanceLogs", {
+const Maintenance = sequelize.define("Maintenance", {
   asset: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  asset_name: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
   maintenance_vendor: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
   maintenance_type: {
-    type: DataTypes.ENUM("Preventive", "Corrective"),
+    type: DataTypes.ENUM("Pencegahan", "Perbaikan"),
     allowNull: false,
   },
   description: {
@@ -30,19 +34,28 @@ const MaintenanceLogs = sequelize.define("MaintenanceLogs", {
   },
   schedule_date: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   completion_date: {
     type: DataTypes.DATE,
     allowNull: true,
   },
   status: {
-    type: DataTypes.ENUM("Scheduled", "Completed", "Pending"),
+    type: DataTypes.ENUM(
+      "Terjadwal",
+      "Selesai",
+      "Dalam Pemeliharaan",
+      "Dibatalkan"
+    ),
+    allowNull: true,
+  },
+  notes: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
 });
 
-const MaintenanceVendor = sequelize.define("MaintenanceVendor", {
+const Vendor = sequelize.define("Vendor", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -68,4 +81,4 @@ const syncDatabase = async () => {
 
 syncDatabase();
 
-module.exports = { MaintenanceLogs, sequelize };
+module.exports = { Maintenance, Vendor, sequelize };

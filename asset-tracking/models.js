@@ -97,6 +97,30 @@ const Location = sequelize.define("Location", {
   },
 });
 
+// Define location shifting model
+const Shifting = sequelize.define("Shifting", {
+  shiftDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  fromLocation: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  toLocation: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  assignee: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  updatedBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
 // Define supplier
 const Supplier = sequelize.define("Supplier", {
   name: {
@@ -171,4 +195,4 @@ const syncDatabase = async () => {
 
 syncDatabase();
 
-module.exports = { Category, Location, Supplier, Asset, Assignment, Assignee, sequelize };
+module.exports = { Category, Location, Supplier, Asset, Assignment, Assignee, Shifting };

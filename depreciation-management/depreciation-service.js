@@ -64,5 +64,5 @@ app.delete("/depreciation/:id", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server asset is running on http://localhost:${PORT}`);
+  console.log(`Asset depreciation service is running on http://localhost:${PORT}`);
 });
