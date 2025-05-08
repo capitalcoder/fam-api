@@ -1,10 +1,16 @@
+require("dotenv").config();
 const { Sequelize, DataTypes } = require("sequelize");
 
 // Initialize Sequelize
-const sequelize = new Sequelize("fam_asset", "postgres", "P@ssw0rd", {
-  host: "localhost",
-  dialect: "postgres",
-});
+const sequelize = new Sequelize(
+  process.env.POSTGRES_DB,
+  process.env.POSTGRES_USER,
+  process.env.POSTGRES_PASSWORD,
+  {
+    host: process.env.POSTGRES_HOST,
+    dialect: "postgres",
+  }
+);
 
 // Define Asset model
 const Asset = sequelize.define("Asset", {
@@ -13,7 +19,8 @@ const Asset = sequelize.define("Asset", {
     allowNull: false,
     unique: true,
   },
-  productionCode: { // Serial number or any number from manufacturer
+  productionCode: {
+    // Serial number or any number from manufacturer
     type: DataTypes.STRING,
     allowNull: true,
     unique: true,
@@ -184,9 +191,7 @@ const Assignee = sequelize.define("Assignee", {
 Category.hasMany(Asset);
 Location.hasMany(Asset);
 Supplier.hasMany(Asset);
-Supplier.hasMany(Asset);
-Asset.hasOne(Assignment);
-Assignee.hasMany(Assignment);
+Asset.hasOne(Assignee);
 
 // Sync the model with the database
 const syncDatabase = async () => {
@@ -195,4 +200,12 @@ const syncDatabase = async () => {
 
 syncDatabase();
 
-module.exports = { Category, Location, Supplier, Asset, Assignment, Assignee, Shifting };
+module.exports = {
+  Category,
+  Location,
+  Supplier,
+  Asset,
+  Assignment,
+  Assignee,
+  Shifting,
+};

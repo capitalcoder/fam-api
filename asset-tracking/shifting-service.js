@@ -8,32 +8,32 @@ shifting_router.post("/", async (req, res) => {
     const shifting = await Shifting.create(req.body);
     res.status(201).json({
       response_code: "201",
-      response_message: "Berhasil mancatat perpindahan aset",
+      response_message: "Successfully records asset shifting",
       data: shifting,
     });
   } catch (error) {
     res.status(400).json({
-      error_code: "400",
-      error_message: "Gagal mencatat perpindahan aset: " + error.message,
+      responsecode: "400",
+      response_message: "Failed to record asset shifting: ",
+      error: error.message,
     });
   }
 });
 
 // Get all shifting
-shifting_router.get("/", async (req, res) => {
+shifting_router.get("/all", async (req, res) => {
   try {
     const shiftings = await Shifting.findAll();
-    res
-      .status(200)
-      .json({
-        response_code: "200",
-        response_message: "Berhasil mengambil semua catatan perpindahan aset",
-        data: shiftings,
-      });
+    res.status(200).json({
+      response_code: "200",
+      response_message: "Successfully get all shifting",
+      data: shiftings,
+    });
   } catch (error) {
     res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
+      response_code: "500",
+      response_message: "Something went wrong at server",
+      error: error.message,
     });
   }
 });
@@ -45,18 +45,19 @@ shifting_router.get("/:id", async (req, res) => {
     if (!shifting) {
       return res.status(404).json({
         response_code: "404",
-        response_message: "Catatan perpindahan tidak ditemukan",
+        response_message: "Asset shifting not found",
       });
     }
     res.json({
       response_code: "200",
-      response_message: "Catatan perpindahan ditemukan",
+      response_message: "Shifting found",
       data: shifting,
     });
   } catch (error) {
     res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
+      response_code: "500",
+      response_message: "Something went wrong",
+      error: error.message,
     });
   }
 });
@@ -68,36 +69,45 @@ shifting_router.put("/:id", async (req, res) => {
     if (!shifting) {
       return res.status(404).json({
         response_code: "404",
-        response_message: "Catatan perpindahan tidak ditemukan",
+        response_message: "Asset shifting not found",
       });
     }
-    await Shifting.update(req.body);
-    res.json(shifting);
+    await shifting.update(req.body);
+    res.json({
+      response_code: "200",
+      response_message: "Successfully update asset shifting",
+      data: shifting,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({
+      response_code: "400",
+      response_message: "Failed to update asset shifting",
+      error: error.message,
+    });
   }
 });
 
 // Delete a shifting by ID
 shifting_router.delete("/:id", async (req, res) => {
   try {
-    const asset = await Shifting.findByPk(req.params.id);
-    if (!asset) {
+    const shifting = await Shifting.findByPk(req.params.id);
+    if (!shifting) {
       return res.status(404).json({
         response_code: "404",
-        response_message: "Catatan perpindahan tidak ditemukan",
+        response_message: "Asset shifting not found",
       });
     }
-    await Shifting.destroy();
+    await shifting.destroy();
     res.status(204).json({
       response_code: "204",
-      response_message: "Berhasil menghapus perpindahan #" + req.params.id,
-      data: category,
+      response_message: "Successfully delete shifting #" + req.params.id,
+      data: shifting,
     });
   } catch (error) {
     res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
+      response_code: "500",
+      response_message: "Something went wrong at esrver",
+      error: error.message,
     });
   }
 });

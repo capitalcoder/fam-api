@@ -13,8 +13,9 @@ category_router.post("/", async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      error_code: "400",
-      error_message: error.message,
+      response_code: "400",
+      response_message: "Failed to add new category",
+      error: error.message,
     });
   }
 });
@@ -30,8 +31,9 @@ category_router.get("/all", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
+      response_code: "500",
+      response_message: "Something went wrong at server",
+      error: error.message,
     });
   }
 });
@@ -42,17 +44,21 @@ category_router.get("/:id", async (req, res) => {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
       return res.status(404).json({
-        error_code: "404",
-        error_message: "Specified category does not exist",
+        response_code: "404",
+        response_message: "Category not found",
       });
     }
     res.json({
       response_code: "200",
-      response_message: "Successfully get a category",
+      response_message: "Category found",
       data: category,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      response_code: "500",
+      response_message: "Something went wrong at server",
+      error: error.message,
+    });
   }
 });
 
@@ -62,8 +68,8 @@ category_router.put("/:id", async (req, res) => {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
       return res.status(404).json({
-        error_code: "404",
-        error_message: "Specified category does not exist",
+        response_code: "404",
+        response_message: "Specified category does not exist",
       });
     }
     await category.update(req.body);
@@ -74,8 +80,9 @@ category_router.put("/:id", async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      error_code: "400",
-      error_message: error.message,
+      response_code: "400",
+      response_message: "Couldn't update category",
+      error: error.message,
     });
   }
 });
@@ -86,8 +93,8 @@ category_router.delete("/:id", async (req, res) => {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
       return res.status(404).json({
-        error_code: "404",
-        error_message: "Specified category does not exist",
+        response_code: "404",
+        response_message: "Specified category does not exist",
       });
     }
     await Category.destroy();
@@ -99,7 +106,8 @@ category_router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error_code: "500",
-      error_message: error.message,
+      response_message: "Something went wrong. Couldn't delete category",
+      error: error.message,
     });
   }
 });

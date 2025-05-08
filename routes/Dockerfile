@@ -1,13 +1,13 @@
-    FROM node:23
+FROM node:23-alpine
 
-    WORKDIR /app
-    
-    COPY ../package*.json ./
-    
-    RUN npm install
-    
-    COPY . .
-    
-    EXPOSE 3000
-    
-    CMD ["node", "index.js"]
+WORKDIR /app
+
+COPY package.json /app
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3443
+
+CMD ["node", "gateway-service.js"]

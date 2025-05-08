@@ -1,34 +1,36 @@
-version: "3.9"
-
 services:
-  auth-service:
-    build: ./auth-service
+  user-service:
+    build: ./user-management
     ports:
-      - "3001:5001"
+      - "3001:3001"
     networks:
       - microservices-net
 
-  data-service:
-    build: ./data-service
+  asset-tracking-service:
+    build: ./asset-tracking
     ports:
       - "3002:3002"
     networks:
       - microservices-net
 
-  logging-service:
-    build: ./logging-service
+  routing-service:
+    build: ./routes
     ports:
-      - "3003:3003"
+      - "3443:3443"
     networks:
       - microservices-net
 
-  routing-service:
-    build: ./nginx
-    ports:
-      - "80:80"
-    networks:
-      - microservices-net
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: P@ssw0rd
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
 networks:
   microservices-net:
     driver: bridge
+
+volumes:
+  pgdata:

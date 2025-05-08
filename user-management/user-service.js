@@ -1,11 +1,12 @@
 const express = require("express");
+const app = express();
+
 const bodyParser = require("body-parser");
 const { User } = require("./models");
 const verifyToken = require("./auth-middleware");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
@@ -69,7 +70,7 @@ app.delete("/users/:id", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "User  not found" });
     }
     await user.destroy();
-    res.status(204).send();
+    res.status(204).send({ status: '204', message: 'Berhasil menghapus data pengguna' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -77,7 +78,7 @@ app.delete("/users/:id", verifyToken, async (req, res) => {
 
 app.post("/users/login", async (req, res) => {
   const { email, password } = req.body;
-  
+
   const user = await User.findOne({
     where: {
       email: email,
@@ -95,7 +96,9 @@ app.post("/users/login", async (req, res) => {
   const token = jwt.sign({ userId: user._id }, "bci-fixed-asset-management", {
     expiresIn: "1h",
   });
-  res.status(200).json({ token });
+  res
+    .status(200)
+    .json({ status: 200, message: "Logged in succesfully ", token: token, username: user.name, role: user.role });
 });
 
 // Start the server

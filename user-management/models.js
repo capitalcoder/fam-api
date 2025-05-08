@@ -1,10 +1,16 @@
+require("dotenv").config();
 const { Sequelize, DataTypes } = require("sequelize");
 
 // Initialize Sequelize
-const sequelize = new Sequelize("fam_user", "postgres", "P@ssw0rd", {
-  host: "localhost",
-  dialect: "postgres",
-});
+const sequelize = new Sequelize(
+  process.env.POSTGRES_DB,
+  process.env.POSTGRES_USER,
+  process.env.POSTGRES_PASSWORD,
+  {
+    host: process.env.POSTGRES_HOST,
+    dialect: "postgres",
+  }
+);
 
 // Define User model
 const User = sequelize.define("User", {
