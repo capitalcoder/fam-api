@@ -27,7 +27,7 @@ supplier_router.get("/all", async (req, res) => {
     res.json({
       response_code: "201",
       response_message: "Successfully get all supplier",
-      data: locations,
+      data: suppliers,
     });
   } catch (error) {
     res.status(500).json({
@@ -51,7 +51,7 @@ supplier_router.get("/:id", async (req, res) => {
     res.json({
       response_code: "200",
       response_message: "Supplier found",
-      data: location,
+      data: supplier,
     });
   } catch (error) {
     res.status(500).json({
@@ -97,7 +97,7 @@ supplier_router.delete("/:id", async (req, res) => {
         response_message: "Supplier not found",
       });
     }
-    await Supplier.destroy();
+    await supplier.destroy();
     res.status(204).json({
       response_code: "204",
       response_message: "Successfully delete supplier",

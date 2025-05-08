@@ -182,6 +182,10 @@ const Assignee = sequelize.define("Assignee", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   updatedBy: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -191,7 +195,8 @@ const Assignee = sequelize.define("Assignee", {
 Category.hasMany(Asset);
 Location.hasMany(Asset);
 Supplier.hasMany(Asset);
-Asset.hasOne(Assignee);
+Assignee.hasMany(Asset);
+Asset.belongsTo(Assignee);
 
 // Sync the model with the database
 const syncDatabase = async () => {
