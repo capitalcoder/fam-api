@@ -1,22 +1,20 @@
-const express = require("express");
+import express from "express";
+import { Shifting } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const shifting_router = express.Router();
-const { Shifting } = require("./models");
 
 // Create a new asset
 shifting_router.post("/", async (req, res) => {
   try {
     const shifting = await Shifting.create(req.body);
-    res.status(201).json({
-      response_code: "201",
-      response_message: "Successfully records asset shifting",
-      data: shifting,
-    });
+    res
+      .status(201)
+      .json(SuccessResponse(201, "Successfully move asset", shifting));
   } catch (error) {
-    res.status(400).json({
-      responsecode: "400",
-      response_message: "Failed to record asset shifting: ",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse(400, "Failed to move asset", error.message));
   }
 });
 
@@ -112,4 +110,4 @@ shifting_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { shifting_router };
+export default shifting_router;

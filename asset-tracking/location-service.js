@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import { Location } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const location_router = express.Router();
-const { Location } = require("./models");
-const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new location
 location_router.post("/", async (req, res) => {
@@ -104,4 +105,4 @@ location_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { location_router };
+export default location_router;

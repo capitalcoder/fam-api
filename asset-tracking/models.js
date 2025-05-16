@@ -1,5 +1,5 @@
-require("dotenv").config();
-const { Sequelize, DataTypes } = require("sequelize");
+import { Sequelize, DataTypes } from "sequelize";
+import {} from "dotenv/config";
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
 );
 
 // Define Asset model
-const Asset = sequelize.define("Asset", {
+export const Asset = sequelize.define("Asset", {
   code: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -62,7 +62,7 @@ const Asset = sequelize.define("Asset", {
 });
 
 // Define category model
-const Category = sequelize.define("Category", {
+export const Category = sequelize.define("Category", {
   code: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -84,7 +84,7 @@ const Category = sequelize.define("Category", {
 });
 
 // Define location model
-const Location = sequelize.define("Location", {
+export const Location = sequelize.define("Location", {
   code: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -106,7 +106,7 @@ const Location = sequelize.define("Location", {
 });
 
 // Define location shifting model
-const Shifting = sequelize.define("Shifting", {
+export const Shifting = sequelize.define("Shifting", {
   shiftDate: {
     type: DataTypes.DATEONLY,
     allowNull: false,
@@ -130,7 +130,7 @@ const Shifting = sequelize.define("Shifting", {
 });
 
 // Define supplier
-const Supplier = sequelize.define("Supplier", {
+export const Supplier = sequelize.define("Supplier", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -154,7 +154,7 @@ const Supplier = sequelize.define("Supplier", {
 });
 
 // Define assignmnet
-const Assignment = sequelize.define("Assignment", {
+export const Assignment = sequelize.define("Assignment", {
   assignDate: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -174,7 +174,7 @@ const Assignment = sequelize.define("Assignment", {
 });
 
 // Define assignmnet
-const Assignee = sequelize.define("Assignee", {
+export const Assignee = sequelize.define("Assignee", {
   employeeId: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -185,7 +185,7 @@ const Assignee = sequelize.define("Assignee", {
   },
   location: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
   },
   updatedBy: {
     type: DataTypes.STRING,
@@ -205,13 +205,3 @@ const syncDatabase = async () => {
 };
 
 syncDatabase();
-
-module.exports = {
-  Category,
-  Location,
-  Supplier,
-  Asset,
-  Assignment,
-  Assignee,
-  Shifting,
-};

@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import { Category } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const category_router = express.Router();
-const { Category } = require("./models");
-const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new category
 category_router.post("/", async (req, res) => {
@@ -18,7 +19,7 @@ category_router.post("/", async (req, res) => {
 });
 
 // Get all category
-category_router.get("", async (req, res) => {
+category_router.get("/all", async (req, res) => {
   try {
     const categories = await Category.findAll();
     res
@@ -111,4 +112,4 @@ category_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { category_router };
+export default category_router;

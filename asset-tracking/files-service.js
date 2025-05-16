@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+const { Category } = require("./models.js");
+const { SuccessResponse, ErrorResponse } = require("./commons.js");
+
 const file_router = express.Router();
-const { Category } = require("./models");
-const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new category
 file_router.post("/", async (req, res) => {
@@ -91,4 +92,4 @@ file_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { file_router };
+export default file_router;

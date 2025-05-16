@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import { Asset } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const asset_router = express.Router();
-const { Asset } = require("./models");
-const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new asset
 asset_router.post("/", async (req, res) => {
@@ -49,7 +50,7 @@ asset_router.get("/:id", async (req, res) => {
 });
 
 // Get a asset by Location
-asset_router.get("at-location/:id", async (req, res) => {
+asset_router.get("/at-location/:id", async (req, res) => {
   try {
     let locationId = req.params.id;
     const asset = await Asset.findAll({ where: { LocationId: locationId } });
@@ -67,10 +68,10 @@ asset_router.get("at-location/:id", async (req, res) => {
 });
 
 // Get a asset by Category
-asset_router.get("by-category/:id", async (req, res) => {
+asset_router.get("/by-category/:id", async (req, res) => {
   try {
     let categoryId = req.params.id;
-    const asset = await Asset.findAll({ where: { categoryId: categoryId } });
+    const asset = await Asset.findAll({ where: { CategoryId: categoryId } });
     if (!asset) {
       return res.status(404).json(ErrorResponse(400, "Asset not found by that category", null));
     }
@@ -85,7 +86,7 @@ asset_router.get("by-category/:id", async (req, res) => {
 });
 
 // Get a asset by Supplier
-asset_router.get("by-supplier/:id", async (req, res) => {
+asset_router.get("/by-supplier/:id", async (req, res) => {
   try {
     let supplierId = req.params.id;
     const asset = await Asset.findAll({ where: { SupplierId: supplierId } });
@@ -139,4 +140,4 @@ asset_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { asset_router };
+export default asset_router;

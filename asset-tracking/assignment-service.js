@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import { Assignment } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const assign_router = express.Router();
-const { Assignment } = require("./models");
-const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new assignment
 assign_router.post("/", async (req, res) => {
@@ -90,4 +91,4 @@ assign_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { assign_router };
+export default assign_router;

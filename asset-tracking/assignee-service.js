@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import { Assignee } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const assignee_router = express.Router();
-const { Assignee } = require("./models");
-const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new assignee
 assignee_router.post("/", async (req, res) => {
@@ -89,4 +90,4 @@ assignee_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { assignee_router };
+export default assignee_router;

@@ -146,7 +146,7 @@ app.post("/users/login", async (req, res) => {
 });
 
 // Change Password
-app.put("/users/:id", verifyToken, async (req, res) => {
+app.put("/users/chpwd/:id", verifyToken, async (req, res) => {
   const { oldPass, newPass, confirmPass } = req.body;
   try {
     const user = await User.findByPk(req.params.id);

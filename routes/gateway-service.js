@@ -52,7 +52,6 @@ const maintenanceProxy = createProxyMiddleware({
 });
 
 app.disable("x-powered-by");
-app.use(express.static())
 app.use(helmet());
 
 app.use("/v1/users", userProxy);

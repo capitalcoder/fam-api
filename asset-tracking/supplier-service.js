@@ -1,22 +1,20 @@
-const express = require("express");
+import express from "express";
+import { Supplier } from "./models.js";
+import { SuccessResponse, ErrorResponse } from "./commons.js";
+
 const supplier_router = express.Router();
-const { Supplier } = require("./models");
 
 // Create a new assignment
 supplier_router.post("/", async (req, res) => {
   try {
     const supplier = await Supplier.create(req.body);
-    res.status(201).json({
-      response_code: "201",
-      response_message: "Successfully add a new location",
-      data: supplier,
-    });
+    res
+      .status(201)
+      .json(SuccessResponse(201, "Successfully add a supplier", supplier));
   } catch (error) {
-    res.status(400).json({
-      response_code: "400",
-      response_message: "Failed to add new supplier",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse(400, "Failed to add a supplier", error.message));
   }
 });
 
@@ -111,4 +109,4 @@ supplier_router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = { supplier_router };
+export default supplier_router;
