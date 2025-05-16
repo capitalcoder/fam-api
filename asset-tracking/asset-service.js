@@ -1,21 +1,19 @@
 const express = require("express");
 const asset_router = express.Router();
 const { Asset } = require("./models");
+const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new asset
 asset_router.post("/", async (req, res) => {
   try {
     const asset = await Asset.create(req.body);
-    res.status(201).json({
-      response_code: "201",
-      response_message: "Berhasil mendaftarkan aset baru",
-      data: asset,
-    });
+    res
+      .status(201)
+      .json(SuccessResponse(201, "Successfully add an asset", asset));
   } catch (error) {
-    res.status(400).json({
-      error_code: "400",
-      error_message: "Gagal mendaftarkan aset: " + error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse(400, "Failed to add an asset", error.message));
   }
 });
 
@@ -25,16 +23,11 @@ asset_router.get("/", async (req, res) => {
     const assets = await Asset.findAll();
     res
       .status(200)
-      .json({
-        response_code: "200",
-        response_message: "Berhasil mengambil semua data aset",
-        data: assets,
-      });
+      .json(SuccessResponse(200, "Successfully load assets", assets));
   } catch (error) {
-    res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load assets", error.message));
   }
 });
 
@@ -43,38 +36,87 @@ asset_router.get("/:id", async (req, res) => {
   try {
     const asset = await Asset.findByPk(req.params.id);
     if (!asset) {
-      return res.status(404).json({
-        response_code: "404",
-        response_message: "Aset tidak ditemukan",
-      });
+      return res.status(404).json(ErrorResponse(400, "Asset not found", null));
     }
-    res.json({
-      response_code: "200",
-      response_message: "Aset ditemukan",
-      data: asset,
-    });
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load an asset", asset));
   } catch (error) {
-    res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load an asset", error.message));
   }
 });
 
-// Update a asset by ID
+// Get a asset by Location
+asset_router.get("at-location/:id", async (req, res) => {
+  try {
+    let locationId = req.params.id;
+    const asset = await Asset.findAll({ where: { LocationId: locationId } });
+    if (!asset) {
+      return res.status(404).json(ErrorResponse(400, "Asset not found at that location", null));
+    }
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load an asset", asset));
+  } catch (error) {
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load an asset", error.message));
+  }
+});
+
+// Get a asset by Category
+asset_router.get("by-category/:id", async (req, res) => {
+  try {
+    let categoryId = req.params.id;
+    const asset = await Asset.findAll({ where: { categoryId: categoryId } });
+    if (!asset) {
+      return res.status(404).json(ErrorResponse(400, "Asset not found by that category", null));
+    }
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load an asset", asset));
+  } catch (error) {
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load an asset", error.message));
+  }
+});
+
+// Get a asset by Supplier
+asset_router.get("by-supplier/:id", async (req, res) => {
+  try {
+    let supplierId = req.params.id;
+    const asset = await Asset.findAll({ where: { SupplierId: supplierId } });
+    if (!asset) {
+      return res.status(404).json(ErrorResponse(400, "Asset not found by that supplier", null));
+    }
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load an asset", asset));
+  } catch (error) {
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load an asset", error.message));
+  }
+});
+
+// Update an asset
 asset_router.put("/:id", async (req, res) => {
   try {
     const asset = await Asset.findByPk(req.params.id);
     if (!asset) {
-      return res.status(404).json({
-        response_code: "404",
-        response_message: "The specified asset does not exist",
-      });
+      return res.status(404).json(ErrorResponse(400, "Asset not found", null));
     }
     await asset.update(req.body);
-    res.json(asset);
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully update an asset", asset));
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json(ErrorResponse(400, "Failed to update an asset", error.message));
   }
 });
 
@@ -83,22 +125,17 @@ asset_router.delete("/:id", async (req, res) => {
   try {
     const asset = await Asset.findByPk(req.params.id);
     if (!asset) {
-      return res.status(404).json({
-        response_code: "404",
-        response_message: "The specified asset does not exist",
-      });
+      return res.status(404).json(ErrorResponse(404, "Asset not found", null));
     }
+    let asstn = asset.name;
     await asset.destroy();
-    res.status(204).json({
-      response_code: "204",
-      response_message: "Successfully delete asset #" + req.params.id,
-      data: category,
-    });
+    res
+      .status(204)
+      .json(SuccessResponse(204, "Successfully delete an asset", asstn));
   } catch (error) {
-    res.status(500).json({
-      error_code: "500",
-      error_message: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to delete an asset", error.message));
   }
 });
 

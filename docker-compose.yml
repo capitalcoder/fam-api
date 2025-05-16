@@ -1,17 +1,28 @@
-services:
+services:      
   user-service:
     build: ./user-management
     ports:
       - "3001:3001"
     networks:
       - microservices-net
+    depends_on:
+      - db_user
 
   asset-tracking-service:
     build: ./asset-tracking
+    environment:
+      NODE_ENV: production
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+      POSTGRES_DB: example
     ports:
       - "3002:3002"
     networks:
       - microservices-net
+    depends_on:
+      db_asset:
+        condition: service_healty
 
   routing-service:
     build: ./routes
@@ -20,13 +31,24 @@ services:
     networks:
       - microservices-net
 
-  db:
+  db_asset:
     image: postgres
     restart: always
-    environment:
-      POSTGRES_PASSWORD: P@ssw0rd
+    user: postgres
+    secrets:
+      - asset-pass
     volumes:
       - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=fam_asset
+      - POSTGRES_PASSWORD=P@ssw0rd
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   microservices-net:

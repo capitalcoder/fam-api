@@ -1,22 +1,19 @@
 const express = require("express");
 const assignee_router = express.Router();
 const { Assignee } = require("./models");
+const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new assignee
 assignee_router.post("/", async (req, res) => {
   try {
     const assignee = await Assignee.create(req.body);
-    res.status(201).json({
-      response_code: "201",
-      response_message: "Successfully adds a new assignee",
-      data: assignee,
-    });
+    res
+      .status(201)
+      .json(SuccessResponse(201, "Successfully add assignee", assignee));
   } catch (error) {
-    res.status(400).json({
-      response_code: "400",
-      response_message: "Failed to add new assignee",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse(400, "Failed to add new assignee", error.message));
   }
 });
 
@@ -24,17 +21,13 @@ assignee_router.post("/", async (req, res) => {
 assignee_router.get("/all", async (req, res) => {
   try {
     const assignees = await Assignee.findAll();
-    res.json({
-      response_code: "200",
-      response_message: "Successfully loads all assignees",
-      data: assignees,
-    });
+    res.status(200).json(
+      SuccessResponse(200, "Successfully loads all assignees", assignees)
+    );
   } catch (error) {
-    res.status(500).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load assignees", error.message));
   }
 });
 
@@ -45,22 +38,13 @@ assignee_router.get("/:id", async (req, res) => {
     if (!assignee) {
       return res
         .status(404)
-        .json({
-          response_code: "404",
-          response_message: "assignee not found",
-        });
+        .json(ErrorResponse(404, "Assignee not found", null));
     }
-    res.json({
-      response_code: "200",
-      response_message: "assignee found",
-      data: assignee,
-    });
+    res.status(200).json(SuccessResponse(200, "Assignee found", assignee));
   } catch (error) {
-    res.status(500).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Cannot Find Assignee", error.message));
   }
 });
 
@@ -71,23 +55,16 @@ assignee_router.put("/:id", async (req, res) => {
     if (!assignee) {
       return res
         .status(404)
-        .json({
-          response_code: "404",
-          response_message: "assignee not found",
-        });
+        .json(ErrorResponse(404, "Assignee not found", null));
     }
     await assignee.update(req.body);
-    res.json({
-      response_code: "200",
-      response_message: "assignee successfully updated",
-      data: assignee,
-    });
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully Update Assignee", assignee));
   } catch (error) {
-    res.status(400).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse(400, "Cannot Update Assignee", error.message));
   }
 });
 
@@ -98,23 +75,17 @@ assignee_router.delete("/:id", async (req, res) => {
     if (!assignee) {
       return res
         .status(404)
-        .json({
-          response_code: "404",
-          response_message: "assignee not found",
-        });
+        .json(ErrorResponse(404, "Assignee not found", null));
     }
+    let assgn = assignee.name;
     await assignee.destroy();
-    res.status(204).json({
-      response_code: "204",
-      response_message: "Successfully delete assignee #" + req.params.id,
-      data: category,
-    });
+    res
+      .status(204)
+      .json(SuccessResponse(204, "Successfully Delete Assignee", assgn));
   } catch (error) {
-    res.status(500).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Cannot Delete Assignee", error.message));
   }
 });
 

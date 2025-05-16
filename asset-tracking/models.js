@@ -42,7 +42,8 @@ const Asset = sequelize.define("Asset", {
       "Tersedia",
       "Sedang Digunakan",
       "Sedang Diperbaiki",
-      "Dibuang"
+      "Dibuang",
+      "Hilang",
     ),
     allowNull: false,
   },

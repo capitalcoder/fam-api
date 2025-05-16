@@ -1,22 +1,19 @@
 const express = require("express");
 const assign_router = express.Router();
 const { Assignment } = require("./models");
+const { SuccessResponse, ErrorResponse } = require("./commons");
 
 // Create a new assignment
 assign_router.post("/", async (req, res) => {
   try {
     const assignment = await Assignment.create(req.body);
-    res.status(201).json({
-      response_code: "201",
-      response_message: "Successfully adds a new assignment",
-      data: assignment,
-    });
+    res
+      .status(201)
+      .json(SuccessResponse(201, "Successfully add an assignment", asset));
   } catch (error) {
-    res.status(400).json({
-      response_code: "400",
-      response_message: "Failed to add new assignment",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to add an assignment", error.message));
   }
 });
 
@@ -24,17 +21,13 @@ assign_router.post("/", async (req, res) => {
 assign_router.get("/all", async (req, res) => {
   try {
     const assignments = await Assignment.findAll();
-    res.json({
-      response_code: "200",
-      response_message: "Successfully loads all assignments",
-      data: assignments,
-    });
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load assignments", assignments));
   } catch (error) {
-    res.status(500).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load assignment", error.message));
   }
 });
 
@@ -45,22 +38,15 @@ assign_router.get("/:id", async (req, res) => {
     if (!assignment) {
       return res
         .status(404)
-        .json({
-          response_code: "404",
-          response_message: "Assignment not found",
-        });
+        .json(ErrorResponse(404, "Assignment not found", null));
     }
-    res.json({
-      response_code: "200",
-      response_message: "Assignment found",
-      data: assignment,
-    });
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load assignment", asset));
   } catch (error) {
-    res.status(500).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load assignment", error.message));
   }
 });
 
@@ -71,23 +57,16 @@ assign_router.put("/:id", async (req, res) => {
     if (!assignment) {
       return res
         .status(404)
-        .json({
-          response_code: "404",
-          response_message: "Assignment not found",
-        });
+        .json(ErrorResponse(404, "Assignment not found", null));
     }
     await assignment.update(req.body);
-    res.json({
-      response_code: "200",
-      response_message: "Assignment successfully updated",
-      data: assignment,
-    });
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully update assignment", assignment));
   } catch (error) {
-    res.status(400).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to update assignment", error.message));
   }
 });
 
@@ -98,23 +77,16 @@ assign_router.delete("/:id", async (req, res) => {
     if (!assignment) {
       return res
         .status(404)
-        .json({
-          response_code: "404",
-          response_message: "Assignment not found",
-        });
+        .json(ErrorResponse(404, "Assignment not found", null));
     }
     await assignment.destroy();
-    res.status(204).json({
-      response_code: "204",
-      response_message: "Successfully delete assignment #" + req.params.id,
-      data: category,
-    });
+    res
+      .status(204)
+      .json(SuccessResponse(204, "Successfully delete assignment", null));
   } catch (error) {
-    res.status(500).json({
-      response_code: "500",
-      response_message: "Something went wrong",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to delete assignment", error.message));
   }
 });
 

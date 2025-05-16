@@ -1,8 +1,9 @@
-const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const https = require("https");
+const express = require("express");
 const fs = require("fs");
 const { default: helmet } = require("helmet");
+const https = require("https");
+const path = require("path")
 const verifyToken = require("./auth-middleware");
 
 const app = express();
@@ -51,6 +52,7 @@ const maintenanceProxy = createProxyMiddleware({
 });
 
 app.disable("x-powered-by");
+app.use(express.static())
 app.use(helmet());
 
 app.use("/v1/users", userProxy);

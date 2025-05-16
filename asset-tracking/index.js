@@ -17,12 +17,12 @@ app.use(bodyParser.json());
 
 // Use routes
 app.use("/assets", asset_router);
-app.use("/assets/category", category_router);
-app.use("/assets/location", location_router);
-app.use("/assets/assignment", assign_router);
-app.use("/assets/assignee", assignee_router);
-app.use("/assets/supplier", supplier_router);
-app.use("/assets/shift", shifting_router);
+app.use("/assets/category/", category_router);
+app.use("/assets/location/", location_router);
+app.use("/assets/assignment/", assign_router);
+app.use("/assets/assignee/", assignee_router);
+app.use("/assets/supplier/", supplier_router);
+app.use("/assets/shift/", shifting_router);
 
 // Start the server
 app.listen(PORT, () => {
