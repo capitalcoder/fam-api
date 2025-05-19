@@ -5,9 +5,13 @@ import { SuccessResponse, ErrorResponse } from "./commons.js";
 const shifting_router = express.Router();
 
 // Create a new asset
-shifting_router.post("/", async (req, res) => {
+shifting_router.post("/move", async (req, res) => {
   try {
     const shifting = await Shifting.create(req.body);
+    Asset.update(
+      { LocationId: shifting.toLocationId },
+      { where: { id: shifting.assetId } }
+    );
     res
       .status(201)
       .json(SuccessResponse(201, "Successfully move asset", shifting));
@@ -77,6 +81,10 @@ You may activate this if in the future it is necessary
 //       });
 //     }
 //     await shifting.update(req.body);
+//     Asset.update(
+//      { LocationId: shifting.toLocationId },
+//      { where: { id: shifting.assetId } }
+//    );
 //     res.json({
 //       response_code: "200",
 //       response_message: "Successfully update asset shifting",

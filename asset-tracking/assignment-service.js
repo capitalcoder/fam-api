@@ -1,16 +1,20 @@
 import express from "express";
-import { Assignment } from "./models.js";
+import { Assignment, Asset } from "./models.js";
 import { SuccessResponse, ErrorResponse } from "./commons.js";
 
 const assign_router = express.Router();
 
 // Create a new assignment
-assign_router.post("/", async (req, res) => {
+assign_router.post("/assign", async (req, res) => {
   try {
     const assignment = await Assignment.create(req.body);
+    Asset.update(
+      { AssigneeId: assignment.assigneeId },
+      { where: { id: assignment.assetId } }
+    );
     res
       .status(201)
-      .json(SuccessResponse(201, "Successfully add an assignment", asset));
+      .json(SuccessResponse(201, "Successfully add an assignment", assignment));
   } catch (error) {
     res
       .status(500)
@@ -61,6 +65,10 @@ assign_router.put("/:id", async (req, res) => {
         .json(ErrorResponse(404, "Assignment not found", null));
     }
     await assignment.update(req.body);
+    Asset.update(
+      { AssigneeId: assignment.assigneeId },
+      { where: { id: assignment.assetId } }
+    );
     res
       .status(200)
       .json(SuccessResponse(200, "Successfully update assignment", assignment));

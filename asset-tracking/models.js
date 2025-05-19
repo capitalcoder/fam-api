@@ -111,17 +111,27 @@ export const Shifting = sequelize.define("Shifting", {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  fromLocation: {
-    type: DataTypes.STRING,
+  fromLocationId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  toLocation: {
+  fromLocationName: {
     type: DataTypes.STRING,
+  },
+  toLocationId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  assignee: {
+  toLocationName: {
     type: DataTypes.STRING,
-    allowNull: true,
+  },
+  assetId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  assetName: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   updatedBy: {
     type: DataTypes.STRING,
@@ -163,12 +173,20 @@ export const Assignment = sequelize.define("Assignment", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  assetId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  assetName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   assignDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
   },
   returnDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
   },
   status: {
     type: DataTypes.ENUM("Active", "Returned"),
@@ -204,7 +222,6 @@ Category.hasMany(Asset);
 Location.hasMany(Asset);
 Supplier.hasMany(Asset);
 Assignee.hasMany(Asset);
-Asset.belongsTo(Assignee);
 
 // Sync the model with the database
 const syncDatabase = async () => {
