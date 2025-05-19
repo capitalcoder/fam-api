@@ -52,9 +52,10 @@ category_router.get("/:id", async (req, res) => {
 });
 
 // Get a category by ID
-category_router.get("parent/:id", async (req, res) => {
+category_router.get("/by-parent/:id", async (req, res) => {
   try {
-    parentId = req.params.id;
+    let parentId = req.params.id;
+    console.log("Categpry Parent: " + parentId);
     const category = await Category.findAll({ where: { parent: parentId } });
     if (!category) {
       return res

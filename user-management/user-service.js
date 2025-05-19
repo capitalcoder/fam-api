@@ -132,15 +132,13 @@ app.post("/users/login", async (req, res) => {
       .json(errorCard(401, "Invalid credentials!", "Authentication failed"));
   }
 
-  const token = jwt.sign({ userId: user._id }, "bci-fixed-asset-management", {
+  const token = jwt.sign({ userId: user.id }, "bci-fixed-asset-management", {
     expiresIn: "1h",
   });
 
   res.status(200).json(
     responseCard(200, "Successfully logged in", {
       token: token,
-      username: user.name,
-      role: user.role,
     })
   );
 });
@@ -181,7 +179,9 @@ app.put("/users/chpwd/:id", verifyToken, async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPass, 10);
     await user.update({ password: hashedPassword });
-    res.status(200).json(responseCard(200, "Successfully change password", user));
+    res
+      .status(200)
+      .json(responseCard(200, "Successfully change password", user));
   } catch (error) {
     res
       .status(400)

@@ -43,7 +43,7 @@ export const Asset = sequelize.define("Asset", {
       "Sedang Digunakan",
       "Sedang Diperbaiki",
       "Dibuang",
-      "Hilang",
+      "Hilang"
     ),
     allowNull: false,
   },
@@ -155,13 +155,20 @@ export const Supplier = sequelize.define("Supplier", {
 
 // Define assignmnet
 export const Assignment = sequelize.define("Assignment", {
+  assigneeId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  assigneeName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   assignDate: {
     type: DataTypes.DATE,
     allowNull: false,
   },
   returnDate: {
     type: DataTypes.DATE,
-    allowNull: false,
   },
   status: {
     type: DataTypes.ENUM("Active", "Returned"),

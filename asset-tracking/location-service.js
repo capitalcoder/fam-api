@@ -66,9 +66,9 @@ location_router.put("/:id", async (req, res) => {
 });
 
 // Get a location by parent
-location_router.get("parent/:id", async (req, res) => {
+location_router.get("/by-parent/:id", async (req, res) => {
   try {
-    locationParent = req.params.id;
+    let locationParent = req.params.id;
     const location = await Location.findAll({
       where: { parent: locationParent },
     });
