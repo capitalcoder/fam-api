@@ -219,9 +219,13 @@ export const Assignee = sequelize.define("Assignee", {
 });
 
 Category.hasMany(Asset);
+Asset.belongsTo(Category);
 Location.hasMany(Asset);
+Asset.belongsTo(Location);
 Supplier.hasMany(Asset);
+Asset.belongsTo(Supplier);
 Assignee.hasMany(Asset);
+Asset.belongsTo(Assignee);
 
 // Sync the model with the database
 const syncDatabase = async () => {

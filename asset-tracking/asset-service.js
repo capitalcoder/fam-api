@@ -1,5 +1,5 @@
 import express from "express";
-import { Asset } from "./models.js";
+import { Asset, Assignee, Category, Location, Supplier } from "./models.js";
 import { SuccessResponse, ErrorResponse } from "./commons.js";
 
 const asset_router = express.Router();
@@ -53,9 +53,14 @@ asset_router.get("/:id", async (req, res) => {
 asset_router.get("/at-location/:id", async (req, res) => {
   try {
     let locationId = req.params.id;
-    const asset = await Asset.findAll({ where: { LocationId: locationId } });
+    const asset = await Asset.findAll({
+      where: { LocationId: locationId },
+      include: [Category, Location, Assignee, Supplier],
+    });
     if (!asset) {
-      return res.status(404).json(ErrorResponse(400, "Asset not found at that location", null));
+      return res
+        .status(404)
+        .json(ErrorResponse(400, "Asset not found at that location", null));
     }
     res
       .status(200)
@@ -71,9 +76,14 @@ asset_router.get("/at-location/:id", async (req, res) => {
 asset_router.get("/by-category/:id", async (req, res) => {
   try {
     let categoryId = req.params.id;
-    const asset = await Asset.findAll({ where: { CategoryId: categoryId } });
+    const asset = await Asset.findAll({
+      where: { CategoryId: categoryId },
+      include: [Category, Location, Assignee, Supplier],
+    });
     if (!asset) {
-      return res.status(404).json(ErrorResponse(400, "Asset not found by that category", null));
+      return res
+        .status(404)
+        .json(ErrorResponse(400, "Asset not found by that category", null));
     }
     res
       .status(200)
@@ -89,9 +99,37 @@ asset_router.get("/by-category/:id", async (req, res) => {
 asset_router.get("/by-supplier/:id", async (req, res) => {
   try {
     let supplierId = req.params.id;
-    const asset = await Asset.findAll({ where: { SupplierId: supplierId } });
+    const asset = await Asset.findAll({
+      where: { SupplierId: supplierId },
+      include: [Category, Location, Assignee, Supplier],
+    });
     if (!asset) {
-      return res.status(404).json(ErrorResponse(400, "Asset not found by that supplier", null));
+      return res
+        .status(404)
+        .json(ErrorResponse(400, "Asset not found by that supplier", null));
+    }
+    res
+      .status(200)
+      .json(SuccessResponse(200, "Successfully load an asset", asset));
+  } catch (error) {
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load an asset", error.message));
+  }
+});
+
+// Get a asset by Assignee
+asset_router.get("/by-assignee/:id", async (req, res) => {
+  try {
+    let assigneeId = req.params.id;
+    const asset = await Asset.findAll({
+      where: { AssigneeId: assigneeId },
+      include: [Category, Location, Assignee, Supplier],
+    });
+    if (!asset) {
+      return res
+        .status(404)
+        .json(ErrorResponse(400, "Asset not found by that assignee", null));
     }
     res
       .status(200)
