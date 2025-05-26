@@ -3,8 +3,8 @@ const express = require("express");
 const fs = require("fs");
 const { default: helmet } = require("helmet");
 const https = require("https");
-const path = require("path")
 const verifyToken = require("./auth-middleware");
+const cors = require("cors");
 
 const app = express();
 const port = 3443;
@@ -51,14 +51,27 @@ const maintenanceProxy = createProxyMiddleware({
   },
 });
 
-app.disable("x-powered-by");
+// const corsOptions = {
+//   origin: "http://localhost:5173",
+//   methods: "GET,POST,PUT,DELETE",
+//   allowedHeaders: "Content-Type,Authorization",
+//   credentials: true,
+//   maxAge: 3600,
+// };
+
+app.use(cors());
 app.use(helmet());
+app.disable("x-powered-by");
 
 app.use("/v1/users", userProxy);
 app.use("/v1/assets", verifyToken, assetProxy);
 app.use("/v1/depreciation", verifyToken, depreciationProxy);
 app.use("/v1/maintenance", verifyToken, maintenanceProxy);
 
-https.createServer(options, app).listen(port, () => {
+// https.createServer(options, app).listen(port, () => {
+//   console.log(`Gateway service running on port ${port}`);
+// });
+
+app.listen(port, () => {
   console.log(`Gateway service running on port ${port}`);
 });
