@@ -1,6 +1,7 @@
 import express from "express";
 import { Category } from "./models.js";
 import { SuccessResponse, ErrorResponse } from "./commons.js";
+import { Op } from "sequelize";
 
 const category_router = express.Router();
 
@@ -110,6 +111,62 @@ category_router.delete("/:id", async (req, res) => {
     res
       .status(500)
       .json(ErrorResponse(500, "Failed to delete a category", error.message));
+  }
+});
+
+// Generate tree
+let treeOfCategories = [];
+let treeObject = {
+  id: "",
+  label: "",
+  children: [],
+};
+
+const genChildren = (parent) => {
+  const isParentExist = Category.count({ where: { parent: parent } });
+  if (!isParentExist) {
+    return;
+  }
+  const revealChildren = Category.findAll({ where: { parent: parent } });
+  const children = [];
+  revealChildren.map((child) => {
+    treeObject.id = child.id;
+    treeObject.label = child.name;
+    children.push(treeObject);
+  });
+  return children;
+};
+
+category_router.get("/generate-tree", async (req, res) => {
+  try {
+    const roots = await Category.findAll({
+      where: {
+        [Op.or]: [
+          { parent: "000" },
+          { parent: "" },
+          { parent: "-" },
+          { parent: "0" },
+        ],
+      },
+    });
+    const treeNode = [];
+    roots.map((parent) => {
+      treeObject.id = parent.id;
+      treeObject.label = parent.name;
+      if(genChildren(parent.code)) {
+        treeObject.children = genChildren(parent.code);
+      }
+    });
+    treeOfCategories.push(parent);
+    res
+      .status(200)
+      .json(
+        SuccessResponse(200, "Successfully load tree of categories", treeOfCategories)
+      );
+  } catch (error) {
+    res
+      .status(500)
+      .json(ErrorResponse(500, "Failed to load tree of categories", error.message));
   }
 });
 

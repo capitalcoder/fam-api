@@ -52,8 +52,7 @@ export const Asset = sequelize.define("Asset", {
     allowNull: true,
   },
   barcode: {
-    type: DataTypes.BLOB,
-    allowNull: true,
+    type: DataTypes.STRING
   },
   updatedBy: {
     type: DataTypes.STRING,

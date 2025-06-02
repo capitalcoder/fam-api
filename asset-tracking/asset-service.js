@@ -1,6 +1,9 @@
 import express from "express";
 import { Asset, Assignee, Category, Location, Supplier } from "./models.js";
 import { SuccessResponse, ErrorResponse } from "./commons.js";
+import qr from "qr-image";
+import fs from "fs";
+import path from "path";
 
 const asset_router = express.Router();
 
@@ -176,6 +179,45 @@ asset_router.delete("/:id", async (req, res) => {
       .status(500)
       .json(ErrorResponse(500, "Failed to delete an asset", error.message));
   }
+});
+
+// Generate QRCode
+asset_router.put("/gen-qr/:id", async (req, res) => {
+  try {
+    const asset = await Asset.findByPk(req.params.id);
+    if (!asset) {
+      return res.status(404).json(ErrorResponse(400, "Asset not found", null));
+    }
+    // Create QR
+    const asset_qrcode = qr.image(asset.code, { type: "png" });
+    // Define Path
+    const qr_filename = path.join("./qr-images/", asset.code + ".png");
+    asset.barcode = qr_filename;
+    console.log("before ")
+    await asset.update();
+    // Save QR to file
+    asset_qrcode.pipe(fs.createWriteStream(qr_filename));
+    const updated = await Asset.findByPk(req.params.id);
+    res
+      .status(200)
+      .json(
+        SuccessResponse(200, "Successfully generate QR code for asset", updated)
+      );
+  } catch (error) {
+    res.status(500).json(ErrorResponse(500, "Failed to generate QR code", error.message));
+  }
+});
+
+asset_router.get("/get-qr/:asset_code", async (req, res) => {
+  const filePath = path.join(
+    "./qr-images/",
+    req.params.asset_code + ".png"
+  );
+  res.download(filePath, (err) => {
+    if (err) {
+      res.status(400).json(ErrorResponse(400, "File not found", "File should be the Asset Code plus file type. Ex: 1001.png"));
+    }
+  });
 });
 
 export default asset_router;
