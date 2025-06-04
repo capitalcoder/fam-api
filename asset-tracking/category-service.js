@@ -33,6 +33,56 @@ category_router.get("/all", async (req, res) => {
   }
 });
 
+// ------------------------ Building Tree - Start ------------------------
+function buildTree(items) {
+  const idToNodeMap = {};
+  const roots = [];
+
+  items.forEach((item) => {
+    idToNodeMap[item.code] = { id: item.code, label: item.name, children: [] };
+  });
+
+  // Link children to parents
+  items.forEach((item) => {
+    if (item.parent === "000") {
+      roots.push(idToNodeMap[item.code]); // Root node
+    } else {
+      if (idToNodeMap[item.parent]) {
+        idToNodeMap[item.parent].children.push(idToNodeMap[item.code]);
+      }
+    }
+  });
+
+  return roots;
+}
+
+category_router.get("/roots", async (req, res) => {
+  try {
+    let items = [];
+    const categories = await Category.findAll();
+    // extract the data
+    categories.map((category) => {
+      let item = category.dataValues;
+      items.push(item);
+    });
+    // build the tree
+    const tree = buildTree(items);
+    // present the result
+    res
+      .status(200)
+      .json(
+        SuccessResponse(200, "Successfully build tree of categories", tree)
+      );
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        ErrorResponse(500, "Failed to build tree of categories", error.message)
+      );
+  }
+});
+// ------------------------ Building Tree - End ------------------------
+
 // Get a category by ID
 category_router.get("/:id", async (req, res) => {
   try {
@@ -111,62 +161,6 @@ category_router.delete("/:id", async (req, res) => {
     res
       .status(500)
       .json(ErrorResponse(500, "Failed to delete a category", error.message));
-  }
-});
-
-// Generate tree
-let treeOfCategories = [];
-let treeObject = {
-  id: "",
-  label: "",
-  children: [],
-};
-
-const genChildren = (parent) => {
-  const isParentExist = Category.count({ where: { parent: parent } });
-  if (!isParentExist) {
-    return;
-  }
-  const revealChildren = Category.findAll({ where: { parent: parent } });
-  const children = [];
-  revealChildren.map((child) => {
-    treeObject.id = child.id;
-    treeObject.label = child.name;
-    children.push(treeObject);
-  });
-  return children;
-};
-
-category_router.get("/generate-tree", async (req, res) => {
-  try {
-    const roots = await Category.findAll({
-      where: {
-        [Op.or]: [
-          { parent: "000" },
-          { parent: "" },
-          { parent: "-" },
-          { parent: "0" },
-        ],
-      },
-    });
-    const treeNode = [];
-    roots.map((parent) => {
-      treeObject.id = parent.id;
-      treeObject.label = parent.name;
-      if(genChildren(parent.code)) {
-        treeObject.children = genChildren(parent.code);
-      }
-    });
-    treeOfCategories.push(parent);
-    res
-      .status(200)
-      .json(
-        SuccessResponse(200, "Successfully load tree of categories", treeOfCategories)
-      );
-  } catch (error) {
-    res
-      .status(500)
-      .json(ErrorResponse(500, "Failed to load tree of categories", error.message));
   }
 });
 

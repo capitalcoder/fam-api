@@ -30,6 +30,56 @@ location_router.get("/all", async (req, res) => {
   }
 });
 
+// ------------------------ Building Tree - Start ------------------------
+function buildTree(items) {
+  const idToNodeMap = {};
+  const roots = [];
+
+  items.forEach((item) => {
+    idToNodeMap[item.code] = { id: item.code, label: item.name, children: [] };
+  });
+
+  // Link children to parents
+  items.forEach((item) => {
+    if (item.parent === "0") {
+      roots.push(idToNodeMap[item.code]); // Root node
+    } else {
+      if (idToNodeMap[item.parent]) {
+        idToNodeMap[item.parent].children.push(idToNodeMap[item.code]);
+      }
+    }
+  });
+
+  return roots;
+}
+
+location_router.get("/roots", async (req, res) => {
+  try {
+    let items = [];
+    const locations = await Location.findAll();
+    // extract the data
+    locations.map((location) => {
+      let item = location.dataValues;
+      items.push(item);
+    });
+    // build the tree
+    const tree = buildTree(items);
+    // present the result
+    res
+      .status(200)
+      .json(
+        SuccessResponse(200, "Successfully build tree of locations", tree)
+      );
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        ErrorResponse(500, "Failed to build tree of locations", error.message)
+      );
+  }
+});
+// ------------------------ Building Tree - End ------------------------
+
 // Get a location by ID
 location_router.get("/:id", async (req, res) => {
   try {

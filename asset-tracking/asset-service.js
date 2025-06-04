@@ -193,8 +193,9 @@ asset_router.put("/gen-qr/:id", async (req, res) => {
     // Define Path
     const qr_filename = path.join("./qr-images/", asset.code + ".png");
     asset.barcode = qr_filename;
-    console.log("before ")
-    await asset.update();
+    console.log("before update:");
+    console.log(asset.dataValues)
+    await asset.update(asset.dataValues);
     // Save QR to file
     asset_qrcode.pipe(fs.createWriteStream(qr_filename));
     const updated = await Asset.findByPk(req.params.id);
@@ -215,7 +216,7 @@ asset_router.get("/get-qr/:asset_code", async (req, res) => {
   );
   res.download(filePath, (err) => {
     if (err) {
-      res.status(400).json(ErrorResponse(400, "File not found", "File should be the Asset Code plus file type. Ex: 1001.png"));
+      res.status(400).json(ErrorResponse(400, "File not found", "Please generate the QR first"));
     }
   });
 });
